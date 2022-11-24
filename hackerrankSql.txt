@@ -1,0 +1,78 @@
+select case 
+when a.x<=a.y then a.x 
+else b.x
+end as X,
+case 
+when a.x<=a.y then a.y 
+else b.y
+end as Y, 
+from functions a ,functions b
+where a.x=b.y and a.y=b.x ;
+
+-------------
+select wands.id,wands.code,wands.power as pw,wands.coins_needed,wp.age,wp.is_evil from wands , wands_property as wp where wp.code=wands.code and wp.is_evil=0;
+
+select wands.id,wands_property.age,wands.coins_needed,wands.power 
+from wands,wands_property 
+where wands.code=wands_property.code and wands_property.is_evil=0
+order by power desc ,wands_property.age desc,wands.coins_needed;
+
+select 
+row_number()over(partition by wands.power,wands_property.age order by wands.power desc,wands_property.age desc,wands.coins_needed) as rn,wands.id,
+wands_property.age,wands.coins_needed,wands.power 
+from wands,wands_property 
+where wands.code=wands_property.code and wands_property.is_evil=0;
+
+--------
+New company ---------by hackerrank
+
+select distinct c.company_code,c.founder,t1.L,t2.SM,t3.M,t4.E from company as c,
+(select company_code,count(distinct lead_manager_code)as L from Lead_Manager group by company_code) as t1,
+(select company_code,count(distinct senior_manager_code) as SM from senior_manager group by company_code)as t2,
+(select company_code,count(distinct manager_code) as M from manager group by company_code)as t3,
+(select company_code,count(distinct employee_code) as E from employee group by company_code) as t4
+where c.company_code=t1.company_code and t1.company_code=t2.company_code and 
+t1.company_code=t3.company_code and t2.company_code=t4.company_code
+order by c.company_code;
+--------- 
+more trial
+select  distinct L.company_code,L.lead_manager_code,SM.senior_manager_code,M.manager_code,E.employee_code from 
+lead_manager as L,Senior_manager as SM,manager as M,employee as E
+where L.company_code=SM.company_code and L.company_code=M.company_code
+and L.company_code=E.company_code
+and L.lead_manager_code=SM.lead_manager_code and SM.lead_manager_code=M.lead_manager_code and SM.senior_manager_code=M.senior_manager_code
+and M.manager_code=E.manager_code;
+
+---------------
+select ch from(
+select hacker_id, name,
+(select count(challenge_id) from challenges as c where c.hacker_id=hackers.hacker_id)as ch from hackers
+order by ch desc,hacker_id)as t 
+group by t.ch having count(ch)=1;
+
+max---- select 
+(select count(challenge_id) from challenges as c where c.hacker_id=hackers.hacker_id)as ch1 from hackers
+order by ch1 desc,hacker_id
+limit 1;
+
+----
+select hacker_id from(
+select hacker_id, name,
+(select count(challenge_id) from challenges as c where c.hacker_id=hackers.hacker_id)as ch from hackers
+order by ch desc,hacker_id)as t 
+group by t.ch having (count(ch)>1
+and ch=(select 
+(select count(challenge_id) from challenges as c where c.hacker_id=hackers.hacker_id)as ch1 from hackers
+order by ch1 desc,hacker_id
+limit 1)) or count(ch)=1;
+
+
+
+
+
+
+
+
+
+
+
